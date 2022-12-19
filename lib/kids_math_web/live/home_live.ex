@@ -65,15 +65,21 @@ defmodule KidsMathWeb.HomeLive do
     first = random_wrong_answer(answer, @max_addend, @max_answer)
     second = random_wrong_answer(answer, @max_addend, @max_answer)
 
-    socket
-    |> assign(wrong_answers: [first, second])
+    # retry if answers are the same
+    case first do
+      ^second ->
+        add_wrong_answers(socket)
+
+      _ ->
+        socket
+        |> assign(wrong_answers: [first, second])
+    end
   end
 
   defp shuffle_answers(%{assigns: %{answer: answer, wrong_answers: wrong_answers}} = socket) do
     attempts =
       (wrong_answers ++ [answer])
       |> Enum.shuffle()
-      |> IO.inspect()
 
     first = Enum.at(attempts, 0)
     second = Enum.at(attempts, 1)

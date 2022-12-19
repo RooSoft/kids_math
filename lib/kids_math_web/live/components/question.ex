@@ -4,7 +4,7 @@ defmodule KidsMathWeb.Components.Question do
   def question(assigns) do
     ~H"""
     <span class="text-9xl">
-      5 + 4 =
+      <%= @addends.left %> + <%= @addends.right %> =
     </span>
     """
   end

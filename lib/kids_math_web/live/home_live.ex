@@ -23,18 +23,23 @@ defmodule KidsMathWeb.HomeLive do
 
   @impl true
   def handle_event(
-        "yo",
-        %{"answer" => value},
+        "new_attempt",
+        %{"attempt" => value},
         %{assigns: %{addends: %{left: left, right: right}}} = socket
       ) do
-    {answer, _remaining} = Integer.parse(value)
+    {attempt, _remaining} = Integer.parse(value)
 
-    case(left + right) do
-      ^answer -> IO.puts("OK")
-      _ -> IO.puts("wrong...")
-    end
+    attempt =
+      case(left + right) do
+        ^attempt -> {:right, attempt}
+        _ -> {:wrong, attempt}
+      end
 
-    {:noreply, socket}
+    {
+      :noreply,
+      socket
+      |> assign(:attempt, attempt)
+    }
   end
 
   defp create_addends(socket) do
@@ -46,7 +51,7 @@ defmodule KidsMathWeb.HomeLive do
 
   defp add_empty_attempt(socket) do
     socket
-    |> assign(:attempt, "")
+    |> assign(:attempt, {:ok, ""})
   end
 
   defp add_answer(%{assigns: %{addends: %{left: left, right: right}}} = socket) do
